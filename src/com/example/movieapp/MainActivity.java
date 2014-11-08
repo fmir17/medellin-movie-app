@@ -6,9 +6,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +26,9 @@ public class MainActivity extends Activity {
 	private TextView lblResultado;
 	private Button bt1;
 	private Button btgetPeliculas;
+	String identificador;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,10 +43,10 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				obtenerPelicula obtenerPel = new obtenerPelicula();
-
-				obtenerPel.execute();
-
+				 identificador = "2";
+				 Intent intent = new Intent(MainActivity.this, InfoPelicula.class);
+				 intent.putExtra("identidad", identificador);
+		         startActivity(intent);
 			}
 		});
 
@@ -73,50 +77,6 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * 
-	 * @author sebastian.garciav Metodo que permite obtener la información de un
-	 *         JSON
-	 */
-	private class obtenerPelicula extends AsyncTask<String, Integer, String> {
-		private String title;
-		private String[] peliculas;
-
-		@Override
-		protected String doInBackground(String... params) {
-
-			boolean resul = true;
-			HttpClient httpClient = new DefaultHttpClient();
-
-			HttpGet del = new HttpGet(
-					"https://pescadores-colombia-api.herokuapp.com/fishinglog/jennifer/Inimaginable");
-			del.setHeader("content-type", "application/json");
-
-			try {
-
-				HttpResponse resp = httpClient.execute(del);
-				String respStr = EntityUtils.toString(resp.getEntity());
-
-				JSONObject respJSON = new JSONObject(respStr);
-
-				title = respJSON.getString("title");
-
-			} catch (Exception ex) {
-				Log.e("ServicioRest", "Error!", ex);
-				resul = false;
-			}
-
-			return title;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
-			super.onPostExecute(result);
-			lblResultado.setText("" + title);
-		}
 	}
 
 	/**

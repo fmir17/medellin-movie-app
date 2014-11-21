@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				 identificador = "2";
+				 identificador = "3";
 				 Intent intent = new Intent(MainActivity.this, InfoPelicula.class);
 				 intent.putExtra("identidad", identificador);
 		         startActivity(intent);

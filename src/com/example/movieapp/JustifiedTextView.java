@@ -15,7 +15,7 @@ public class JustifiedTextView extends View {
         TextPaint textPaint;
         Typeface font;
         int textColor;
-        float textSize = 29f, lineHeight = 57f, wordSpacing = 15f, lineSpacing = 15f;
+        float textSize = 25f, lineHeight = 57f, wordSpacing = 15f, lineSpacing = 15f;
         float onBirim, w, h;
         float leftPadding, rightPadding;
 

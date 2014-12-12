@@ -1,5 +1,11 @@
 package com.example.movieapp;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -10,58 +16,61 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.LauncherActivity.ListItem;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.style.SuperscriptSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity {
 
-	private TextView lblResultado;
+	private ListView listview;
 	private Button bt1;
-	private Button btgetPeliculas;
 	String identificador;
-
+	JSONArray respJSON; // Arreglo con datos de las peliculas
+	private Bitmap[] imagenes; // Arreglo donde se guarda cada una de las
+								// imagenes cargadas desde url
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-		lblResultado = (TextView) findViewById(R.id.lblResultado);
+		setContentView(R.layout.activity_main);		
+		obtenerListaPeliculas nuevo = new obtenerListaPeliculas(this);
+		nuevo.execute();
+		
+		listview = (ListView)findViewById(R.id.listView);
+		
 		bt1 = (Button) findViewById(R.id.btnGet2);
-		btgetPeliculas = (Button) findViewById(R.id.btnGetPeliculas);
 
 		bt1.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 
-				 identificador = "3";
-				 Intent intent = new Intent(MainActivity.this, InfoPelicula.class);
-				 intent.putExtra("identidad", identificador);
-		         startActivity(intent);
+				identificador = "3";
+				Intent intent = new Intent(MainActivity.this,
+						InfoPelicula.class);
+				intent.putExtra("identidad", identificador);
+				startActivity(intent);
 			}
 		});
-
-		btgetPeliculas.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				obtenerListaPeliculas listaPeliculas = new obtenerListaPeliculas();
-
-				listaPeliculas.execute();
-
-			}
-		});
-
 	}
 
 	@Override
@@ -78,68 +87,93 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	/**
 	 * 
 	 * @author sebastian.garciav Metodo que permite Obtener todas las peliculas
 	 */
 	private class obtenerListaPeliculas extends
-			AsyncTask<String, Integer, String> {
+			AsyncTask<String, Integer, ItemAdapter> {
 		private String title;
-		private String[] peliculas;
+		private String[] titulos;
+		private String[] Ids;
+		Context context;
+		
+		public obtenerListaPeliculas (Context context){
+			this.context = context;
+		}
 
 		@Override
-		protected String doInBackground(String... params) {
-		
+		protected ItemAdapter doInBackground(String... params) {
+
 			boolean resul = true;
 			HttpClient httpClient = new DefaultHttpClient();
-			
 			HttpGet del = new HttpGet(
 					"https://medellin-movie.herokuapp.com/movie");
 			del.setHeader("content-type", "application/json");
-			
-	
 
 			try {
 
-				
-				
 				HttpResponse resp = httpClient.execute(del);
-				String respStr = EntityUtils.toString(resp.getEntity());				
-				JSONArray respJSON = new JSONArray(respStr);
-				
-				 peliculas = new String[respJSON.length()];
-				 
-				 System.out.println("Tamaño del arreglo="+respJSON.length());
-				
-				 for(int i=0; i<respJSON.length(); i++)
-				 {
-				 JSONObject obj = respJSON.getJSONObject(i);
-				
-				 
-				 String title = obj.getString("title");
-				 String url = obj.getString("url");
-				
-				 peliculas[i] = "" + title + "-" + url ;
-				 
-				 }
-				 
-			
+				String respStr = EntityUtils.toString(resp.getEntity());
+				respJSON = new JSONArray(respStr);
+				titulos = new String[respJSON.length()];
+				Ids = new String[respJSON.length()];
+				System.out.println("Tamaño del arreglo=" + respJSON.length());
+				JSONObject obj;			
+				for (int i = 0; i < respJSON.length(); i++) {
+					obj = respJSON.getJSONObject(i);
+					titulos[i] = obj.getString("title");
+					Ids[i] = obj.getString("id");
+				}
 			} catch (Exception ex) {
 				Log.e("ServicioRest", "Error!", ex);
 				resul = false;
 			}
 
-			return title;
+			// Para cargar las imagenes con una url y llenar el arreglo
+			URL imageUrl = null;
+			HttpURLConnection conn = null;
+			imagenes = new Bitmap[respJSON.length()];
+			try {
+				String url;
+				JSONObject object;
+				for (int k = 0; k < respJSON.length(); k++) {
+					object = respJSON.getJSONObject(k);
+					url = object.getString("urlImage");
+					imageUrl = new URL(url);
+					conn = (HttpURLConnection) imageUrl.openConnection();
+					conn.connect();
+					imagenes[k] = BitmapFactory.decodeStream(conn
+							.getInputStream());
+				}
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			ArrayList <Item> items = new ArrayList<Item>();
+			for (int i = 0; i < respJSON.length(); i++) {
+				items.add(new Item(imagenes[i], titulos[i], Ids[i]));
+			}
+			 ItemAdapter adaptador = new ItemAdapter(context,items);					
+			
+			 return adaptador;
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(ItemAdapter result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			
-			lblResultado.setText("" + peliculas[0]);
+			/*ArrayList <Item> items = new ArrayList<Item>();
+			for (int i = 0; i < respJSON.length(); i++) {
+				items.add(new Item(imagenes[i], titulos[i], Ids[i]));
+			}
+			 ItemAdapter adaptador = new ItemAdapter(this,items);*/
+			 listview.setAdapter(result);
 		}
 	}
-
 }

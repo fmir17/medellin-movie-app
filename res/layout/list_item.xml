@@ -16,7 +16,7 @@
         android:layout_centerInParent="true"
         android:layout_toRightOf="@id/imagenLista"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textIsSelectable="false" />
 
 </RelativeLayout>

@@ -21,10 +21,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.style.SuperscriptSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,21 +35,24 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity {
 
 	private ListView listview;
-	private Button bt1;
 	String identificador;
 	JSONArray respJSON; // Arreglo con datos de las peliculas
 	private Bitmap[] imagenes; // Arreglo donde se guarda cada una de las
 								// imagenes cargadas desde url
+	ItemAdapter adaptador;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +60,19 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);		
 		obtenerListaPeliculas nuevo = new obtenerListaPeliculas(this);
 		nuevo.execute();
-		
-		listview = (ListView)findViewById(R.id.listView);
-		
-		bt1 = (Button) findViewById(R.id.btnGet2);
-
-		bt1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				identificador = "3";
+		listview = (ListView)findViewById(R.id.listView);		
+        listview.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int posicion, long id) {
+                Item dato = (Item) adaptador.getItem(posicion);
+                identificador = dato.getId();
 				Intent intent = new Intent(MainActivity.this,
 						InfoPelicula.class);
 				intent.putExtra("identidad", identificador);
 				startActivity(intent);
-			}
-		});
+            }
+        });
+		
 	}
 
 	@Override
@@ -159,20 +161,14 @@ public class MainActivity extends Activity {
 			for (int i = 0; i < respJSON.length(); i++) {
 				items.add(new Item(imagenes[i], titulos[i], Ids[i]));
 			}
-			 ItemAdapter adaptador = new ItemAdapter(context,items);					
+			 adaptador = new ItemAdapter(context,items);					
 			
 			 return adaptador;
 		}
 
 		@Override
 		protected void onPostExecute(ItemAdapter result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			/*ArrayList <Item> items = new ArrayList<Item>();
-			for (int i = 0; i < respJSON.length(); i++) {
-				items.add(new Item(imagenes[i], titulos[i], Ids[i]));
-			}
-			 ItemAdapter adaptador = new ItemAdapter(this,items);*/
 			 listview.setAdapter(result);
 		}
 	}

@@ -8,6 +8,9 @@ public class Item {
 	private String titulo;
 	private String id;
 	
+	public Item(){
+	}
+	
 	public Item(Bitmap icono, String titulo, String id){
 		this.icono = icono;
 		this.titulo = titulo;

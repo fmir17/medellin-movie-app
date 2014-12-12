@@ -39,8 +39,7 @@ public class InfoPelicula extends Activity {
 	private String descripcion, link;
 	private ImageView imagenPelicula;
 	private Bitmap imagen;
-
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +50,7 @@ public class InfoPelicula extends Activity {
 		lblFormat = (TextView) findViewById(R.id.lblFormat);
 		lblDirector = (TextView) findViewById(R.id.lblDirector);
 		imagenPelicula = (ImageView)findViewById(R.id.imagenPelicula);
+		imagenPelicula.setImageBitmap(imagen);
 		Bundle bundle = getIntent().getExtras();
 		obtenerPelicula obtenerPel = new obtenerPelicula();
 		obtenerPel.execute(bundle.getString("identidad"));

@@ -9,15 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.movieapp.MainActivity" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:text="En Cartelera"
-        android:textSize="16dp" />
-
     <ListView
         android:id="@+id/listView"
         android:layout_width="wrap_content"

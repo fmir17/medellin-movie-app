@@ -15,8 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toRightOf="@id/imagenLista"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_marginLeft="10dp"
+        android:textSize="12sp"
         android:textIsSelectable="false" />
 
 </RelativeLayout>

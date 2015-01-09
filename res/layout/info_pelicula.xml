@@ -6,17 +6,8 @@
     <LinearLayout
         android:id="@+id/LayoutPrincipal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:text="Información de la Pelicula"
-            android:textSize="16dp" />
 
         <TableLayout
             android:layout_width="wrap_content"
@@ -42,14 +33,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="17dp"
-                            android:text="Titulo:  " />
+                            android:text="Titulo:  "
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/lblTitle"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="17dp"
-                            android:text="TextView" />
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:lines="1"
+                            android:text=""
+                            android:textSize="12sp" />
                     </TableRow>
 
                     <TableRow>
@@ -58,14 +55,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="Genero:  " />
+                            android:text="Genero:  "
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/lblGenre"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="TextView" />
+                            android:text=""
+                            android:textSize="12sp" />
                     </TableRow>
 
                     <TableRow>
@@ -74,14 +73,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="Formato:  " />
+                            android:text="Formato:  "
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/lblFormat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="TextView" />
+                            android:text=""
+                            android:textSize="12sp" />
                     </TableRow>
 
                     <TableRow>
@@ -90,14 +91,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="Director:  " />
+                            android:text="Director:  "
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/lblDirector"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="TextView" />
+                            android:text=""
+                            android:textSize="12sp" />
                     </TableRow>
                 </TableLayout>
             </TableRow>
@@ -105,30 +108,73 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="40dp"
             android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:text="Calificacion:  " />
+                android:layout_marginTop="10dp"
+                android:text="Calificacion:"
+                android:textSize="12sp" />
 
             <RatingBar
                 android:id="@+id/ratingbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numStars="5"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
                 android:stepSize="1.0" />
+
+            <TextView
+                android:id="@+id/lblCalificacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:text=""
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnTrailer"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:background="@drawable/boton_selector"
+                android:textSize="14sp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginEnd="30dp"               
+                android:text="Ver Trailer" />
+            
+            <Button
+                android:id="@+id/btnSalas"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:background="@drawable/boton_selector"
+                android:textSize="14sp"                
+                android:text="Cinemas" />
+            
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:text="Descripcion:  " />
+            android:layout_marginTop="1dp"
+            android:text="Sinopsis:  "
+            android:textSize="12sp" />
     </LinearLayout>
 
 </ScrollView>

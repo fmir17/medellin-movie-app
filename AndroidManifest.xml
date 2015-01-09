@@ -17,14 +17,19 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="Cartelera" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="InfoPelicula"></activity>
+        <activity 
+            android:name="InfoPelicula"
+            android:label="Detalles de la Pelicula"
+            >                        
+        </activity>
+        <activity android:name="Video" android:label="Trailer de la Pelicula"></activity>
     </application>
 
 </manifest>

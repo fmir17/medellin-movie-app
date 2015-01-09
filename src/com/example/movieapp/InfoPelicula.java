@@ -17,28 +17,26 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Typeface;
+import android.graphics.PorterDuff.Mode;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebView;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class InfoPelicula extends Activity {
+public class InfoPelicula extends Activity implements OnClickListener{
 
-	private TextView lblTitle, lblGenre, lblFormat, lblDirector;
-	private String descripcion, link;
+	private TextView lblTitle, lblGenre, lblFormat, lblDirector,lblCalificacion;
+	private String descripcion, link, video;
 	private ImageView imagenPelicula;
 	private Bitmap imagen;
+	private RatingBar stars;
+	private Button trailer,salas;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +48,28 @@ public class InfoPelicula extends Activity {
 		lblFormat = (TextView) findViewById(R.id.lblFormat);
 		lblDirector = (TextView) findViewById(R.id.lblDirector);
 		imagenPelicula = (ImageView)findViewById(R.id.imagenPelicula);
+		lblCalificacion = (TextView)findViewById(R.id.lblCalificacion);
+		trailer = (Button)findViewById(R.id.btnTrailer);
+		//trailer.getBackground().setColorFilter(0xFFFF0000, Mode.MULTIPLY);
+		salas = (Button)findViewById(R.id.btnSalas);
+		trailer.setOnClickListener(this);
+		salas.setOnClickListener(this);
+		stars = (RatingBar)findViewById(R.id.ratingbar);
+		stars.setEnabled(false);
 		imagenPelicula.setImageBitmap(imagen);
 		Bundle bundle = getIntent().getExtras();
 		obtenerPelicula obtenerPel = new obtenerPelicula();
 		obtenerPel.execute(bundle.getString("identidad"));
+	}
+	
+	@Override
+	public void onClick(View v) {
+		if(v.getId()== R.id.btnTrailer){
+			Log.i("log", "Estoy en el condicional del video");
+			Intent intent = new Intent(InfoPelicula.this,Video.class);
+			intent.putExtra("video", video);
+			startActivity(intent);
+		}
 	}
 
 	/**
@@ -62,8 +78,6 @@ public class InfoPelicula extends Activity {
 	 *         JSON
 	 */
 	private class obtenerPelicula extends AsyncTask<String, Integer, String> {
-		private String title;
-		private String[] peliculas;
 		JSONObject respJSON;
 		private String idPelicula;
 
@@ -73,16 +87,16 @@ public class InfoPelicula extends Activity {
 			HttpClient httpClient = new DefaultHttpClient();
 
 			idPelicula = params[0];
-			System.out.println(idPelicula);
+			//System.out.println(idPelicula);
 			HttpGet del = new HttpGet(
 					"https://medellin-movie.herokuapp.com/movie/" + idPelicula);
 			del.setHeader("content-type", "application/json");
 
 			try {
-				System.out.println("Estoy en el primer try");
+				//System.out.println("Estoy en el primer try");
 				HttpResponse resp = httpClient.execute(del);
 				String respStr = EntityUtils.toString(resp.getEntity());
-				System.out.println("json" + respStr);
+				//System.out.println("json" + respStr);
 				JSONArray respJSONArray = new JSONArray(respStr);
 				respJSON = respJSONArray.getJSONObject(0);
 				link = respJSON.getString("urlImage");
@@ -94,7 +108,7 @@ public class InfoPelicula extends Activity {
 			URL imageUrl = null;
 			HttpURLConnection conn = null;
 			try {
-				System.out.print("Estoy en el ssegundo try");
+				//System.out.print("Estoy en el ssegundo try");
 				imageUrl = new URL(link);
 				conn = (HttpURLConnection) imageUrl.openConnection();
 				conn.connect();
@@ -107,7 +121,7 @@ public class InfoPelicula extends Activity {
 
 			}
 
-			return title;
+			return "";
 		}
 
 		@Override
@@ -120,6 +134,15 @@ public class InfoPelicula extends Activity {
 				lblFormat.setText("" + respJSON.getString("format"));
 				lblDirector.setText("" + respJSON.getString("director"));
 				descripcion = respJSON.getString("description");
+				/* La estrellas manean valores decimales por lo que se debe
+				realizar la conversion de string a float*/
+				String estrellas = respJSON.getString("stars");
+				stars.setRating(Float.parseFloat(estrellas));
+				//---------------------------------------------------------
+				lblCalificacion.setText(estrellas);
+				
+				video = "rtsp://v6.cache4.c.youtube.com/CigLENy73wIaHwmh5W2TKCuN2RMYDSANFEgGUgx1c2VyX3VwbG9hZHMM/0/0/0/video.3gp";
+				
 				JustifiedTextView jtv = new JustifiedTextView(
 						getApplicationContext(), descripcion);
 				LinearLayout place = (LinearLayout) findViewById(R.id.LayoutPrincipal);

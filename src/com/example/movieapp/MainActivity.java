@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,34 +15,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.LauncherActivity.ListItem;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.style.SuperscriptSpan;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 public class MainActivity extends Activity {
 
@@ -53,11 +38,20 @@ public class MainActivity extends Activity {
 	private Bitmap[] imagenes; // Arreglo donde se guarda cada una de las
 								// imagenes cargadas desde url
 	ItemAdapter adaptador;
+	ProgressDialog mensaje;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);		
+		setContentView(R.layout.activity_main);	
+		//-------mensaje de actualizacion de cartelera------------------
+		mensaje = new ProgressDialog(MainActivity.this);
+		mensaje.setTitle("Bienvenido a MovieApp");
+		mensaje.setMessage("Actualizando Cartelera...");
+		mensaje.setIndeterminate(false);
+		mensaje.setCancelable(false);
+		mensaje.show();
+		//-------------------------------------------------------------
 		obtenerListaPeliculas nuevo = new obtenerListaPeliculas(this);
 		nuevo.execute();
 		listview = (ListView)findViewById(R.id.listView);		
@@ -95,7 +89,6 @@ public class MainActivity extends Activity {
 	 */
 	private class obtenerListaPeliculas extends
 			AsyncTask<String, Integer, ItemAdapter> {
-		private String title;
 		private String[] titulos;
 		private String[] Ids;
 		Context context;
@@ -104,10 +97,9 @@ public class MainActivity extends Activity {
 			this.context = context;
 		}
 
+		// Se modifica el metodo doInBackground para que retorne un objeto de tipo ItemAdapter
 		@Override
 		protected ItemAdapter doInBackground(String... params) {
-
-			boolean resul = true;
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet del = new HttpGet(
 					"https://medellin-movie.herokuapp.com/movie");
@@ -129,7 +121,6 @@ public class MainActivity extends Activity {
 				}
 			} catch (Exception ex) {
 				Log.e("ServicioRest", "Error!", ex);
-				resul = false;
 			}
 
 			// Para cargar las imagenes con una url y llenar el arreglo
@@ -139,15 +130,20 @@ public class MainActivity extends Activity {
 			try {
 				String url;
 				JSONObject object;
+				Bitmap auxiliar;
 				for (int k = 0; k < respJSON.length(); k++) {
 					object = respJSON.getJSONObject(k);
 					url = object.getString("urlImage");
 					imageUrl = new URL(url);
 					conn = (HttpURLConnection) imageUrl.openConnection();
 					conn.connect();
-					imagenes[k] = BitmapFactory.decodeStream(conn
-							.getInputStream());
+					// se redimensionan las imagenes para que se vean de igual tamaño en la lista
+					auxiliar = BitmapFactory.decodeStream(conn.getInputStream());
+					auxiliar = Bitmap.createScaledBitmap(auxiliar, 200,200, true);
+					//--------------------------------------------------------------
+					imagenes[k] = auxiliar;
 				}
+				mensaje.dismiss();//cierra mensaje de actualizacion de cartelera
 			} catch (IOException e) {
 
 				e.printStackTrace();
@@ -169,7 +165,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(ItemAdapter result) {
 			super.onPostExecute(result);
-			 listview.setAdapter(result);
+			listview.setAdapter(result);
 		}
 	}
 }

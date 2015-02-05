@@ -3,9 +3,9 @@
     android:shape="rectangle">
     <padding
         android:left="7dp"
-        android:top="15dp"
+        android:top="7dp"
         android:right="7dp"
-        android:bottom="15dp" />
+        android:bottom="7dp" />
     <gradient
         android:startColor="#10429c"
         android:endColor="#3c7fc6"

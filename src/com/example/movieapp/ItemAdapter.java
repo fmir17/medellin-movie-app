@@ -40,7 +40,6 @@ public class ItemAdapter extends BaseAdapter{
 	public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
         if (convertView == null) {
-            // Create a new view into the list.
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = inflater.inflate(R.layout.list_item, null);
         }

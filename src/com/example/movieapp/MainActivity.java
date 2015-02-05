@@ -148,17 +148,14 @@ public class MainActivity extends Activity {
 
 				e.printStackTrace();
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+						
 			ArrayList <Item> items = new ArrayList<Item>();
 			for (int i = 0; i < respJSON.length(); i++) {
 				items.add(new Item(imagenes[i], titulos[i], Ids[i]));
 			}
 			 adaptador = new ItemAdapter(context,items);					
-			
 			 return adaptador;
 		}
 

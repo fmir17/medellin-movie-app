@@ -31,7 +31,7 @@ import android.widget.TextView;
 
 public class InfoPelicula extends Activity implements OnClickListener{
 
-	private TextView lblTitle, lblGenre, lblFormat, lblDirector,lblCalificacion;
+	private TextView lblTitle, lblGenre, lblFormat, lblDirector,lblCalificacion,lblReparto;
 	private String descripcion, link, video;
 	private ImageView imagenPelicula;
 	private Bitmap imagen;
@@ -49,14 +49,16 @@ public class InfoPelicula extends Activity implements OnClickListener{
 		lblDirector = (TextView) findViewById(R.id.lblDirector);
 		imagenPelicula = (ImageView)findViewById(R.id.imagenPelicula);
 		lblCalificacion = (TextView)findViewById(R.id.lblCalificacion);
+		lblReparto = (TextView)findViewById(R.id.lblReparto);
 		trailer = (Button)findViewById(R.id.btnTrailer);
-		//trailer.getBackground().setColorFilter(0xFFFF0000, Mode.MULTIPLY);
 		salas = (Button)findViewById(R.id.btnSalas);
+		stars = (RatingBar)findViewById(R.id.ratingbar);
+		
 		trailer.setOnClickListener(this);
 		salas.setOnClickListener(this);
-		stars = (RatingBar)findViewById(R.id.ratingbar);
 		stars.setEnabled(false);
 		imagenPelicula.setImageBitmap(imagen);
+		
 		Bundle bundle = getIntent().getExtras();
 		obtenerPelicula obtenerPel = new obtenerPelicula();
 		obtenerPel.execute(bundle.getString("identidad"));
@@ -85,42 +87,31 @@ public class InfoPelicula extends Activity implements OnClickListener{
 		protected String doInBackground(String... params) {
 
 			HttpClient httpClient = new DefaultHttpClient();
-
 			idPelicula = params[0];
-			//System.out.println(idPelicula);
 			HttpGet del = new HttpGet(
 					"https://medellin-movie.herokuapp.com/movie/" + idPelicula);
 			del.setHeader("content-type", "application/json");
 
 			try {
-				//System.out.println("Estoy en el primer try");
 				HttpResponse resp = httpClient.execute(del);
 				String respStr = EntityUtils.toString(resp.getEntity());
-				//System.out.println("json" + respStr);
 				JSONArray respJSONArray = new JSONArray(respStr);
 				respJSON = respJSONArray.getJSONObject(0);
 				link = respJSON.getString("urlImage");
 			} catch (Exception ex) {
 				Log.e("ServicioRest", "Error!", ex);
-
 			}
 			// Para cargar las imagenes con una url
 			URL imageUrl = null;
 			HttpURLConnection conn = null;
 			try {
-				//System.out.print("Estoy en el ssegundo try");
 				imageUrl = new URL(link);
 				conn = (HttpURLConnection) imageUrl.openConnection();
 				conn.connect();
 				imagen = BitmapFactory.decodeStream(conn.getInputStream());
-
-
 			} catch (IOException e) {
-
 				e.printStackTrace();
-
 			}
-
 			return "";
 		}
 
@@ -133,16 +124,15 @@ public class InfoPelicula extends Activity implements OnClickListener{
 				lblGenre.setText("" + respJSON.getString("genre"));
 				lblFormat.setText("" + respJSON.getString("format"));
 				lblDirector.setText("" + respJSON.getString("director"));
+				lblReparto.setText("" + respJSON.getString("cast"));
 				descripcion = respJSON.getString("description");
-				/* La estrellas manean valores decimales por lo que se debe
+				video = respJSON.getString("urlVideo");
+				/* La estrellas j valores decimales por lo que se debe
 				realizar la conversion de string a float*/
 				String estrellas = respJSON.getString("stars");
 				stars.setRating(Float.parseFloat(estrellas));
 				//---------------------------------------------------------
-				lblCalificacion.setText(estrellas);
-				
-				video = "rtsp://v6.cache4.c.youtube.com/CigLENy73wIaHwmh5W2TKCuN2RMYDSANFEgGUgx1c2VyX3VwbG9hZHMM/0/0/0/video.3gp";
-				
+				lblCalificacion.setText(estrellas);								
 				JustifiedTextView jtv = new JustifiedTextView(
 						getApplicationContext(), descripcion);
 				LinearLayout place = (LinearLayout) findViewById(R.id.LayoutPrincipal);

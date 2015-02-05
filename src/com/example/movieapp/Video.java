@@ -55,7 +55,7 @@ public class Video extends YouTubeBaseActivity implements OnInitializedListener 
 		// ----------------------------------------------------------------------
 		
 		YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
-		youTubeView.initialize("AIzaSyBTcHQMtlTXkVdItfD4HZT_UdtrRQgdAuQ", this);
+		youTubeView.initialize("AIzaSyBTcHQMtlTXkVdItfD4HZT_UdtrRQgdAuQ", this); //Clave para Youtube API 
 		Bundle bundle = getIntent().getExtras();
 		IdVideo = bundle.getString("video");
 	}
@@ -73,7 +73,7 @@ public class Video extends YouTubeBaseActivity implements OnInitializedListener 
 	public void onInitializationSuccess(Provider provider,
 			YouTubePlayer player, boolean wasRestored) {
 		if (!wasRestored) {
-			player.loadVideo("N0_PnI-ps88");// LOL Cats
+			player.loadVideo(IdVideo);// LOL Cats
 		}
 	}
 

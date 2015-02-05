@@ -27,7 +27,7 @@ public class JustifiedTextView extends View {
 
         private void init() {
                 textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                textColor = Color.DKGRAY;
+                textColor = Color.WHITE;
         }
 
         @Override

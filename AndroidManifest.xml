@@ -30,6 +30,8 @@
             >                        
         </activity>
         <activity android:name="Video" android:label="Trailer de la Pelicula"></activity>
+        <activity android:name="cinemasActivity" android:label="Cincemas de la pelicula"></activity>
     </application>
 
 </manifest>
+

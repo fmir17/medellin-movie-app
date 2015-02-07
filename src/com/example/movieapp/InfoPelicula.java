@@ -72,6 +72,14 @@ public class InfoPelicula extends Activity implements OnClickListener{
 			intent.putExtra("video", video);
 			startActivity(intent);
 		}
+
+		if(v.getId()== R.id.btnSalas){
+			Log.i("log", "Estoy en el condicional de salas");
+			Intent intent = new Intent(InfoPelicula.this,cinemasActivity.class);
+			intent.putExtra("salas", "2");
+			startActivity(intent);
+		}		
+		
 	}
 
 	/**

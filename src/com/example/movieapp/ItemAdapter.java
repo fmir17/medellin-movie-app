@@ -1,7 +1,6 @@
 package com.example.movieapp;
 
 import java.util.ArrayList;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,5 +49,4 @@ public class ItemAdapter extends BaseAdapter{
         titulo.setText(item.getTitulo());
         return rowView;
 	}
-
 }

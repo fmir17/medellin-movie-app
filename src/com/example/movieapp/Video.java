@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -63,17 +65,16 @@ public class Video extends YouTubeBaseActivity implements OnInitializedListener 
 	@Override
 	public void onInitializationFailure(Provider provider,
 			YouTubeInitializationResult result) {
-		/*
-		 * Toast.makeText(this, "Error: " + "No fue posible cargar el video",
-		 * Toast.LENGTH_LONG) .show();
-		 */
+	    	Toast.makeText(getBaseContext(),
+	            "No fue posible cargar el video. Comprueba tu conexión a Internet.", Toast.LENGTH_LONG)
+	            .show();
 	}
 
 	@Override
 	public void onInitializationSuccess(Provider provider,
 			YouTubePlayer player, boolean wasRestored) {
 		if (!wasRestored) {
-			player.loadVideo(IdVideo);// LOL Cats
+			player.loadVideo(IdVideo);
 		}
 	}
 

@@ -14,10 +14,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff.Mode;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,19 +33,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class InfoPelicula extends Activity implements OnClickListener{
 
-	private TextView lblTitle, lblGenre, lblFormat, lblDirector,lblCalificacion,lblReparto;
+	private TextView lblTitle, lblGenre, lblFormat, lblDirector,lblCalificacion,lblReparto,lblDuracion;
 	private String descripcion, link, video;
 	private ImageView imagenPelicula;
 	private Bitmap imagen;
 	private RatingBar stars;
 	private Button trailer,salas;
+	private String[] cinemas;
+	private String[] cinemasID;
+	private String idPelicula;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (!verificaConexion(this)) {
+		    Toast.makeText(getBaseContext(),
+		            "Comprueba tu conexión a Internet. Cerrando Aplicación ... ", Toast.LENGTH_LONG)
+		            .show();
+		    this.finish();
+		}
 		setContentView(R.layout.info_pelicula);
 
 		lblTitle = (TextView) findViewById(R.id.lblTitle);
@@ -53,6 +68,7 @@ public class InfoPelicula extends Activity implements OnClickListener{
 		trailer = (Button)findViewById(R.id.btnTrailer);
 		salas = (Button)findViewById(R.id.btnSalas);
 		stars = (RatingBar)findViewById(R.id.ratingbar);
+		lblDuracion = (TextView)findViewById(R.id.lblDuracion);
 		
 		trailer.setOnClickListener(this);
 		salas.setOnClickListener(this);
@@ -73,13 +89,35 @@ public class InfoPelicula extends Activity implements OnClickListener{
 			startActivity(intent);
 		}
 
-		if(v.getId()== R.id.btnSalas){
-			Log.i("log", "Estoy en el condicional de salas");
-			Intent intent = new Intent(InfoPelicula.this,cinemasActivity.class);
-			intent.putExtra("salas", "2");
-			startActivity(intent);
-		}		
-		
+		if(v.getId()== R.id.btnSalas){		 
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Tu Cinema Preferido?");
+			builder.setItems(cinemas, new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog, int item) {
+			        dialog.cancel();
+					Intent intent = new Intent(InfoPelicula.this,CinemasActivity.class);
+					intent.putExtra("IDCinema", cinemasID[item]);
+					intent.putExtra("IDPelicula", idPelicula);
+					intent.putExtra("nombreCinema", cinemas[item]);
+					startActivity(intent);			        
+			    }
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+		}				
+	}
+	
+	public static boolean verificaConexion(Context ctx) {
+	    boolean bConectado = false;
+	    ConnectivityManager connec = (ConnectivityManager) ctx
+	            .getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo[] redes = connec.getAllNetworkInfo();
+	    for (int i = 0; i < 2; i++) {
+	        if (redes[i].getState() == NetworkInfo.State.CONNECTED) {
+	            bConectado = true;
+	        }
+	    }
+	    return bConectado;
 	}
 
 	/**
@@ -89,7 +127,6 @@ public class InfoPelicula extends Activity implements OnClickListener{
 	 */
 	private class obtenerPelicula extends AsyncTask<String, Integer, String> {
 		JSONObject respJSON;
-		private String idPelicula;
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -120,6 +157,33 @@ public class InfoPelicula extends Activity implements OnClickListener{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			
+			// Para cargar los cinemas donde se proyecta la pelicula
+
+			HttpGet del2 = new HttpGet(
+					"https://medellin-movie.herokuapp.com/cinema/" + idPelicula);
+			del2.setHeader("content-type", "application/json");
+
+			try {
+
+				HttpResponse resp = httpClient.execute(del2);
+				String respStr = EntityUtils.toString(resp.getEntity());
+				JSONArray respuesta = new JSONArray(respStr);
+				JSONObject obj;
+				obj = respuesta.getJSONObject(0);
+				JSONArray cinema = new JSONArray(obj.getString("cinema"));
+				JSONObject obj2;
+				cinemas = new String[cinema.length()];
+				cinemasID = new String[cinema.length()];
+				for(int i =0; i < cinema.length();i++){
+					obj2 = cinema.getJSONObject(i);
+					cinemas[i] = obj2.getString("cinemaName");
+					cinemasID[i] = obj2.getString("cinemaId");
+				}				
+			} catch (Exception ex) {
+				Log.e("ServicioRest", "Error!", ex);
+			}											
 			return "";
 		}
 
@@ -132,6 +196,7 @@ public class InfoPelicula extends Activity implements OnClickListener{
 				lblGenre.setText("" + respJSON.getString("genre"));
 				lblFormat.setText("" + respJSON.getString("format"));
 				lblDirector.setText("" + respJSON.getString("director"));
+				lblDuracion.setText("" + respJSON.getString("duration") + " minutos");
 				lblReparto.setText("" + respJSON.getString("cast"));
 				descripcion = respJSON.getString("description");
 				video = respJSON.getString("urlVideo");

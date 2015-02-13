@@ -15,11 +15,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +32,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -43,6 +47,12 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (!verificaConexion(this)) {
+		    Toast.makeText(getBaseContext(),
+		            "Comprueba tu conexión a Internet. Cerrando aplicación ... ", Toast.LENGTH_LONG)
+		            .show();
+		    this.finish();
+		}
 		setContentView(R.layout.activity_main);	
 		//-------mensaje de actualizacion de cartelera------------------
 		mensaje = new ProgressDialog(MainActivity.this);
@@ -51,7 +61,7 @@ public class MainActivity extends Activity {
 		mensaje.setIndeterminate(false);
 		mensaje.setCancelable(false);
 		mensaje.show();
-		//-------------------------------------------------------------
+		//-------------------------------------------------------------			
 		obtenerListaPeliculas nuevo = new obtenerListaPeliculas(this);
 		nuevo.execute();
 		listview = (ListView)findViewById(R.id.listView);		
@@ -68,7 +78,7 @@ public class MainActivity extends Activity {
         });
 		
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -83,6 +93,20 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public static boolean verificaConexion(Context ctx) {
+	    boolean bConectado = false;
+	    ConnectivityManager connec = (ConnectivityManager) ctx
+	            .getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo[] redes = connec.getAllNetworkInfo();
+	    for (int i = 0; i < 2; i++) {
+	        if (redes[i].getState() == NetworkInfo.State.CONNECTED) {
+	            bConectado = true;
+	        }
+	    }
+	    return bConectado;
+	}
+	
 	/**
 	 * 
 	 * @author sebastian.garciav Metodo que permite Obtener todas las peliculas
@@ -112,7 +136,6 @@ public class MainActivity extends Activity {
 				respJSON = new JSONArray(respStr);
 				titulos = new String[respJSON.length()];
 				Ids = new String[respJSON.length()];
-				System.out.println("Tamaño del arreglo=" + respJSON.length());
 				JSONObject obj;			
 				for (int i = 0; i < respJSON.length(); i++) {
 					obj = respJSON.getJSONObject(i);

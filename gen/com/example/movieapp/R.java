@@ -31,35 +31,49 @@ public final class R {
         public static final int boton_normal=0x7f020000;
         public static final int boton_seleccionado=0x7f020001;
         public static final int boton_selector=0x7f020002;
-        public static final int estilo_item=0x7f020003;
-        public static final int estilo_titulo=0x7f020004;
-        public static final int hercules=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
+        public static final int cartelera=0x7f020003;
+        public static final int cine=0x7f020004;
+        public static final int cinemas2=0x7f020005;
+        public static final int detalles=0x7f020006;
+        public static final int estilo_item=0x7f020007;
+        public static final int estilo_titulo=0x7f020008;
+        public static final int ic_launcher=0x7f020009;
+        public static final int trailer=0x7f02000a;
     }
     public static final class id {
-        public static final int LayoutPrincipal=0x7f090001;
-        public static final int action_settings=0x7f090010;
-        public static final int btnSalas=0x7f09000c;
-        public static final int btnTrailer=0x7f09000b;
-        public static final int imagenLista=0x7f09000d;
-        public static final int imagenPelicula=0x7f090003;
-        public static final int lblCalificacion=0x7f09000a;
-        public static final int lblDirector=0x7f090007;
-        public static final int lblDuracion=0x7f090004;
-        public static final int lblFormat=0x7f090006;
-        public static final int lblGenre=0x7f090005;
-        public static final int lblReparto=0x7f090008;
-        public static final int lblTitle=0x7f090002;
-        public static final int listView=0x7f090000;
-        public static final int ratingbar=0x7f090009;
-        public static final int tituloLista=0x7f09000e;
-        public static final int youtube_view=0x7f09000f;
+        public static final int LayoutPrincipal=0x7f090006;
+        public static final int action_settings=0x7f090018;
+        public static final int btnSalas=0x7f090011;
+        public static final int btnTrailer=0x7f090010;
+        public static final int imagenLista=0x7f090015;
+        public static final int imagenPelicula=0x7f090008;
+        public static final int lblCalificacion=0x7f09000f;
+        public static final int lblDirector=0x7f09000c;
+        public static final int lblDuracion=0x7f090009;
+        public static final int lblEmpresa=0x7f090000;
+        public static final int lblFormat=0x7f09000b;
+        public static final int lblGenre=0x7f09000a;
+        public static final int lblReparto=0x7f09000d;
+        public static final int lblTitle=0x7f090007;
+        public static final int lblciudad=0x7f090001;
+        public static final int lbldireccion=0x7f090002;
+        public static final int lblformato=0x7f090013;
+        public static final int lblhora=0x7f090012;
+        public static final int lblprecio=0x7f090014;
+        public static final int lbltelefono=0x7f090003;
+        public static final int listView=0x7f090005;
+        public static final int listaCinema=0x7f090004;
+        public static final int ratingbar=0x7f09000e;
+        public static final int tituloLista=0x7f090016;
+        public static final int youtube_view=0x7f090017;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int info_pelicula=0x7f030001;
-        public static final int list_item=0x7f030002;
-        public static final int video=0x7f030003;
+        public static final int activity_cinemas=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int info_pelicula=0x7f030002;
+        public static final int item_cinema=0x7f030003;
+        public static final int list_item=0x7f030004;
+        public static final int video=0x7f030005;
     }
     public static final class menu {
         public static final int main=0x7f080000;
